@@ -23,7 +23,7 @@ app.get("/products", async (req, res) => {
 
 //GET singular product from DB
 app.get("/products/:id", async (req, res) => {
-  const id = Number(req.params.id);
+  const id = parseInt(req.params.id, 10);
 
   if (isNaN(id)) {
     return res.status(400).send({
@@ -32,7 +32,7 @@ app.get("/products/:id", async (req, res) => {
   }
 
   try {
-    const [rows] = await connect.query("SELECT * FROM products WHERE id = ?", [id]);
+    const [rows] = await connection.query("SELECT * FROM products WHERE id = ?", [id]);
 
     if (rows.length === 0) {
       return res.status(404).send({
