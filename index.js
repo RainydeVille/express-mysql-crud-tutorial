@@ -10,7 +10,7 @@ app.listen(3000, () => {
   console.log("💃 Server is dancing in port 3000");
 });
 
-//GET products from DB
+//GET all products
 app.get("/products", async (req, res) => {
   try {
     const [rows] = await connection.query("SELECT * FROM products");
@@ -21,7 +21,7 @@ app.get("/products", async (req, res) => {
   }
 });
 
-//GET singular product from DB
+//GET single product by id
 app.get("/products/:id", async (req, res) => {
   const id = parseInt(req.params.id, 10);
 
@@ -43,5 +43,20 @@ app.get("/products/:id", async (req, res) => {
   } catch (error) {
     console.error("😭 Database error", error);
     res.status(500).send({ message: "😭 Internal server error" });
+  }
+});
+
+//ADD products
+app.post("/products", async (req, res) => {
+  const { title, price, description } = req.body;
+
+  if (!title || typeof title !== "string") {
+    return res.status(400).send({ message: "🤨 Title must be a non-empty string" });
+  }
+  if (typeof price !== "number" || price <= 0) {
+    return res.status(400).send({ message: "🤨 Price must be a positive number" });
+  }
+  if (!description || typeof description !== "string") {
+    return res.status(400).send({ message: "🤨 Description must be a non-empty string" });
   }
 });
