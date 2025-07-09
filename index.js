@@ -104,15 +104,15 @@ app.put("/products/:id", async (req, res) => {
     const fields = [];
     const values = [];
 
-    if (!title !== undefined) {
+    if (title !== undefined) {
       fields.push("title = ?");
       values.push(title);
     }
-    if (!price !== undefined) {
+    if (price !== undefined) {
       fields.push("price = ?");
       values.push(price);
     }
-    if (!description !== undefined) {
+    if (description !== undefined) {
       fields.push("description = ?");
       values.push(description);
     }
