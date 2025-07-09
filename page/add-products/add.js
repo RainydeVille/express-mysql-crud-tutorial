@@ -1,3 +1,18 @@
+//TOAST
+function showToast(message, isSuccess = true) {
+  const toastElement = document.getElementById("toast");
+  const toastBody = document.getElementById("toast-body");
+
+  toastBody.textContent = message;
+
+  // Change toast color
+  toastElement.classList.remove("text-bg-primary", "text-bg-danger", "text-bg-success");
+  toastElement.classList.add(isSuccess ? "text-bg-success" : "text-bg-danger");
+
+  const bsToast = new bootstrap.Toast(toastElement);
+  bsToast.show();
+}
+
 //ADD products
 document.querySelector("form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -12,17 +27,22 @@ document.querySelector("form").addEventListener("submit", async (e) => {
 
   const newProduct = { title, description, price };
 
-  const res = await fetch("http://localhost:3000/products", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newProduct),
-  });
+  try {
+    const res = await fetch("http://localhost:3000/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newProduct),
+    });
 
-  if (res.ok) {
-    alert("💃 Product added successfully!");
-    window.location.href = "/page"; //Redirect back to product list
-  } else {
-    const err = await res.json();
-    alert(`😭 Error: ${err.message}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      showToast("🎉 Product added successfully!");
+      setTimeout(() => (window.location.href = "/page"), 1500);
+    } else {
+      showToast(`😭 Error: ${data.message}`, false);
+    }
+  } catch (error) {
+    showToast("🚨 Network error", false);
   }
 });

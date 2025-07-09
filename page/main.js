@@ -1,3 +1,18 @@
+//TOAST
+function showToast(message, isSuccess = true) {
+  const toastElement = document.getElementById("toast");
+  const toastBody = document.getElementById("toast-body");
+
+  toastBody.textContent = message;
+
+  // Color styling
+  toastElement.classList.remove("text-bg-success", "text-bg-danger", "text-bg-primary");
+  toastElement.classList.add(isSuccess ? "text-bg-success" : "text-bg-danger");
+
+  const bsToast = new bootstrap.Toast(toastElement);
+  bsToast.show();
+}
+
 //fetch and render products
 async function loadProducts() {
   const res = await fetch("http://localhost:3000/products");
@@ -53,28 +68,29 @@ document.getElementById("update-form").addEventListener("submit", async (e) => {
   });
 
   if (res.ok) {
-    alert("💃 Product updated!");
+    showToast("💃 Product updated!");
     bootstrap.Modal.getInstance(document.getElementById("updateModal")).hide();
     loadProducts();
   } else {
     const err = await res.json();
-    alert(`😭 Error: ${err.message}`);
+    showToast(`😭 Error: ${err.message}`, false);
   }
 });
 
 //DELETE products
 async function deleteProduct(id) {
-  if (!confirm("🤔 Are you absolutely sure you want to delete this product")) return;
+  const confirmed = confirm("🤔 Are you sure you want to delete this product?");
+  if (!confirmed) return;
 
   const res = await fetch(`http://localhost:3000/products/${id}`, {
     method: "DELETE",
   });
 
   if (res.ok) {
-    alert("🗑️ Product deleted");
+    showToast("🗑️ Product deleted successfully");
     loadProducts();
   } else {
-    const err = await res.join();
-    alert(`😭 Error: ${err.message}`);
+    const err = await res.json();
+    showToast(`😭 Error: ${err.message}`, false);
   }
 }
