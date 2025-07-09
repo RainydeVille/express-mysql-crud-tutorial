@@ -25,6 +25,7 @@ async function loadProducts() {
 
 loadProducts();
 
+//UPDATE products functionality
 function openUpdateModal(product) {
   document.getElementById("update-id").value = product.id;
   document.getElementById("update-title").value = product.title;
@@ -34,3 +35,29 @@ function openUpdateModal(product) {
   const modal = new bootstrap.Modal(document.getElementById("updateModal"));
   modal.show();
 }
+
+document.getElementById("update-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("update-id").value;
+
+  const updatedProduct = {
+    title: document.getElementById("update-title").value,
+    price: parseFloat(document.getElementById("update-price").value),
+    description: document.getElementById("update-description").value,
+  };
+
+  const res = await fetch(`http://localhost:3000/products/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedProduct),
+  });
+
+  if (res.ok) {
+    alert("💃 Product updated!");
+    bootstrap.Modal.getInstance(document.getElementById("updateModal")).hide();
+    loadProducts();
+  } else {
+    const err = await res.json();
+    alert(`😭 Error: ${err.message}`);
+  }
+});
