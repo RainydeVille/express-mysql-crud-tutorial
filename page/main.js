@@ -24,3 +24,13 @@ async function loadProducts() {
 }
 
 loadProducts();
+
+function openUpdateModal(product) {
+  document.getElementById("update-id").value = product.id;
+  document.getElementById("update-title").value = product.title;
+  document.getElementById("update-price").value = product.price;
+  document.getElementById("update-description").value = product.description;
+
+  const modal = new bootstrap.Modal(document.getElementById("updateModal"));
+  modal.show();
+}
