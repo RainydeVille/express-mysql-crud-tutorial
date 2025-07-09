@@ -5,6 +5,10 @@ import connection from "./mysql-connect.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use((req, res) => {
+  console.warn(`404 - ${req.method} ${req.originalUrl}`);
+  res.status(404).send({ message: "🚫 Route not found" });
+});
 
 app.listen(3000, () => {
   console.log("💃 Server is dancing in port 3000");
@@ -21,15 +25,21 @@ app.get("/products", async (req, res) => {
   }
 });
 
-//GET single product by id
-app.get("/products/:id", async (req, res) => {
-  const id = parseInt(req.params.id, 10);
-
-  if (isNaN(id)) {
-    return res.status(400).send({
+function validateId(id, res) {
+  const parsedId = parseInt(id, 10);
+  if (isNaN(parsedId)) {
+    res.status(400).send({
       message: "🤨 bruh, ID must be a number",
     });
+    return null;
   }
+  return parsedId;
+}
+
+//GET single product by id
+app.get("/products/:id", async (req, res) => {
+  const id = validateId(req.params.id, res);
+  if (id === null) return;
 
   try {
     const [rows] = await connection.query("SELECT * FROM products WHERE id = ?", [id]);
@@ -80,14 +90,9 @@ app.post("/products", async (req, res) => {
 
 //UPDATE products
 app.put("/products/:id", async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = validateId(req.params.id, res);
+  if (id === null) return;
   const { title, price, description } = req.body;
-
-  if (isNaN(id)) {
-    return res.status(400).send({
-      message: "🤨 bruh, ID must be a number",
-    });
-  }
 
   if (!title && !price && !description) {
     return res.status(400).send({ message: "🤨 Must provide at least one field to update" });
@@ -131,13 +136,8 @@ app.put("/products/:id", async (req, res) => {
 
 //DELETE products
 app.delete("/products/:id", async (req, res) => {
-  const id = parseInt(req.params.id, 10);
-
-  if (isNaN(id)) {
-    return res.status(400).send({
-      message: "🤨 bruh, ID must be a number",
-    });
-  }
+  const id = validateId(req.params.id, res);
+  if (id === null) return;
 
   try {
     const [result] = await connection.query("DELETE FROM products WHERE id = ?", [id]);
