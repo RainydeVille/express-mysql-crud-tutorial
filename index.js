@@ -73,7 +73,58 @@ app.post("/products", async (req, res) => {
 
     res.status(201).send({ message: "💃 Product created successfully!", data: newProduct });
   } catch (error) {
-    console.error("😭 Database error", error);
+    console.error("😭 Failed to insert product", error);
+    res.status(500).send({ message: "😭 Server error while creating product" });
+  }
+});
+
+//UPDATE products
+app.put("/products/:id", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const { title, price, description } = req.body;
+
+  if (isNaN(id)) {
+    return res.status(400).send({
+      message: "🤨 bruh, ID must be a number",
+    });
+  }
+
+  if (!title && !price && !description) {
+    return res.status(400).send({ message: "🤨 Must provide at least one field to update" });
+  }
+
+  try {
+    //Does product exist?
+    const [exist] = await connection.query("SELECT * FROM products WHERE id = ?", [id]);
+    if (exist.length === 0) {
+      return res.status(404).send({ message: "😲 Product not found!" });
+    }
+
+    //dynamic update
+    const fields = [];
+    const values = [];
+
+    if (!title !== undefined) {
+      fields.push("title = ?");
+      values.push(title);
+    }
+    if (!price !== undefined) {
+      fields.push("price = ?");
+      values.push(price);
+    }
+    if (!description !== undefined) {
+      fields.push("description = ?");
+      values.push(description);
+    }
+
+    values.push(id); //if everything okay then push ID
+
+    const sql = `UPDATE products SET ${fields.join(", ")} WHERE id = ?`;
+    await connection.query(sql, values);
+
+    res.status(200).send({ message: "💃 Product updated successfully" });
+  } catch (error) {
+    console.error("😭 Failed to update product:", error);
     res.status(500).send({ message: "😭 Internal server error" });
   }
 });
