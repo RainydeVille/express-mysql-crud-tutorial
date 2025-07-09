@@ -23,8 +23,8 @@ This project lets you **create**, **read**, **update**, and **delete** products 
 ### 1. Clone this repo
 
 ```bash
-git clone https://github.com/your-username/mysql-express-product-app.git
-cd mysql-express-product-app
+git clone hhttps://github.com/RainydeVille/express-mysql-crud-tutorial.git
+cd express-mysql-crud-tutorial
 ```
 
 ### 2. Install dependencies
