@@ -37,12 +37,12 @@ document.querySelector("form").addEventListener("submit", async (e) => {
     const data = await res.json();
 
     if (res.ok) {
-      showToast("🎉 Product added successfully!");
+      showToast("💃 Product added successfully!");
       setTimeout(() => (window.location.href = "/page"), 1500);
     } else {
       showToast(`😭 Error: ${data.message}`, false);
     }
   } catch (error) {
-    showToast("🚨 Network error", false);
+    showToast("😭 Network error", false);
   }
 });
