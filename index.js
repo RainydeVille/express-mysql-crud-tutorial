@@ -59,4 +59,21 @@ app.post("/products", async (req, res) => {
   if (!description || typeof description !== "string") {
     return res.status(400).send({ message: "🤨 Description must be a non-empty string" });
   }
+
+  try {
+    const [result] = await connection.query("INSERT INTO products (title, price, description) VALUES (?, ?, ?)", [title, price, description]);
+
+    //MySQL gives back insertId
+    const newProduct = {
+      id: result.insertId,
+      title,
+      price,
+      description,
+    };
+
+    res.status(201).send({ message: "💃 Product created successfully!", data: newProduct });
+  } catch (error) {
+    console.error("😭 Database error", error);
+    res.status(500).send({ message: "😭 Internal server error" });
+  }
 });
