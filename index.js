@@ -5,14 +5,6 @@ import connection from "./mysql-connect.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use((req, res) => {
-  console.warn(`404 - ${req.method} ${req.originalUrl}`);
-  res.status(404).send({ message: "🚫 Route not found" });
-});
-
-app.listen(3000, () => {
-  console.log("💃 Server is dancing in port 3000");
-});
 
 //GET all products
 app.get("/products", async (req, res) => {
@@ -151,4 +143,13 @@ app.delete("/products/:id", async (req, res) => {
     console.error("😭 Failed to delete product", error);
     res.status(500).send({ message: "😭 Server error during deletion" });
   }
+});
+
+app.use((req, res) => {
+  console.warn(`404 - ${req.method} ${req.originalUrl}`);
+  res.status(404).send({ message: "🚫 Route not found" });
+});
+
+app.listen(3000, () => {
+  console.log("💃 Server is dancing in port 3000");
 });
