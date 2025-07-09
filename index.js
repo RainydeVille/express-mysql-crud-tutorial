@@ -128,3 +128,27 @@ app.put("/products/:id", async (req, res) => {
     res.status(500).send({ message: "😭 Internal server error" });
   }
 });
+
+//DELETE products
+app.delete("/products/:id", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+
+  if (isNaN(id)) {
+    return res.status(400).send({
+      message: "🤨 bruh, ID must be a number",
+    });
+  }
+
+try {
+  const [result] = await connection.query("DELETE FROM products WHERE id = ?". [id]);
+
+  if (result.affectedRows === 0) {
+    return res.status(404).send({message: `😲 Product with ID ${id} not found`});
+  }
+
+  res.status(200).send({message: `🗑️ Product with ID ${id} has been successfully deleted`});
+} catch(error) {
+  console.error("😭 Failed to delete product", error);
+  res.status(500).send({message: "😭 Server error during deletion"});
+}
+});
