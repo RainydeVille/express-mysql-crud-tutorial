@@ -61,3 +61,20 @@ document.getElementById("update-form").addEventListener("submit", async (e) => {
     alert(`😭 Error: ${err.message}`);
   }
 });
+
+//DELETE products
+async function deleteProduct(id) {
+  if (!confirm("🤔 Are you absolutely sure you want to delete this product")) return;
+
+  const res = await fetch(`http://localhost:3000/products/${id}`, {
+    method: "DELETE",
+  });
+
+  if (res.ok) {
+    alert("🗑️ Product deleted");
+    loadProducts();
+  } else {
+    const err = await res.join();
+    alert(`😭 Error: ${err.message}`);
+  }
+}
